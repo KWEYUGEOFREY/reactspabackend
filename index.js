@@ -37,7 +37,7 @@ app.get('/', (request, response) => {
   
   app.get('/info', (request, response) => {
     const personsCount = persons.length
-    const date = new Date();
+    const date = new Date()
   
     response.send(`
       <p>Phonebook has info for ${personsCount} people</p>
@@ -45,6 +45,32 @@ app.get('/', (request, response) => {
     `);
   })
 
+  
+app.get('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const person = persons.find(person => person.id === id)
+    
+  
+    if (person) {
+      response.json(person)
+    } else {
+      response.status(404).send(`Person with id ${id}  not found`)
+    }
+  })
+
+  app.delete('/api/persons/:id', (request, response) => {
+    const id = request.params.id
+    const initialPersonsLength = persons.length
+    persons = persons.filter(person => person.id !== id)
+  
+    if (persons.length < initialPersonsLength) {
+      response.status(204).send(`deleted successfully`)
+    } else {
+      response.status(404).send({ error: 'Person not found' })
+    }
+  })
+  
+  
 
 const PORT = 3001
 app.listen(PORT)
